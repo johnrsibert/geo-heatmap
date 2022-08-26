@@ -52,6 +52,10 @@ class Generator:
                 e.g.: (None, None), (None, '2019-01-01'), ('2017-02-11'), ('2019-01-01')
         """
         data = json.load(json_file)
+        print('Data loaded from', json_file)
+
+        # print('----------------')
+        # print(data)
 
         # Find the correct key for timestamps
         first_element = data["locations"][0]
@@ -63,7 +67,7 @@ class Generator:
                 if "latitudeE7" not in loc or "longitudeE7" not in loc:
                     continue
                 coords = (round(loc["latitudeE7"] / 1e7, 6),
-                           round(loc["longitudeE7"] / 1e7, 6))
+                          round(loc["longitudeE7"] / 1e7, 6))
 
                 if timestampInRange(loc[key_timestamp], date_range):
                     self.updateCoord(coords)
@@ -94,7 +98,7 @@ class Generator:
                 if "latitudeE7" not in loc or "longitudeE7" not in loc:
                     continue
                 coords = (round(loc["latitudeE7"] / 1e7, 6),
-                            round(loc["longitudeE7"] / 1e7, 6))
+                          round(loc["longitudeE7"] / 1e7, 6))
 
                 if timestampInRange(loc[key_timestamp], date_range):
                     self.updateCoord(coords)
@@ -184,7 +188,7 @@ class Generator:
                 self.loadKMLData(read_file, date_range)
         else:
             raise ValueError("unsupported extension for {!r}: only .json and .kml supported"
-                .format(file_name))
+                             .format(file_name))
 
     def updateCoord(self, coords):
         self.coordinates[coords] += 1
@@ -279,6 +283,7 @@ class Generator:
             print("{}: {}".format(name, stat))
         print()
 
+
 if __name__ == "__main__":
     parser = ArgumentParser(formatter_class=RawTextHelpFormatter)
     parser.add_argument(
@@ -293,9 +298,10 @@ if __name__ == "__main__":
                         help="The earliest date from which you want to see data in the heatmap.")
     parser.add_argument("--max-date", dest="max_date", metavar="YYYY-MM-DD", type=str, required=False,
                         help="The latest date from which you want to see data in the heatmap.")
-    parser.add_argument("-s", "--stream", dest="stream", action="store_true", help="Option to iteratively load data.")
+    parser.add_argument("-s", "--stream", dest="stream",
+                        action="store_true", help="Option to iteratively load data.")
     parser.add_argument("--map", "-m", dest="map", metavar="MAP", type=str, required=False, default="OpenStreetMap",
-                        help="The name of the map tiles you want to use.\n" \
+                        help="The name of the map tiles you want to use.\n"
                         "(e.g. 'OpenStreetMap', 'StamenTerrain', 'StamenToner', 'StamenWatercolor')")
     parser.add_argument("-z", "--zoom-start", dest="zoom_start", type=int, required=False,
                         help="The initial zoom level for the map. (default: %(default)s)", default=6)
@@ -307,7 +313,6 @@ if __name__ == "__main__":
                         help="The minimum opacity of the heatmap. (default: %(default)s)", default=0.2)
     parser.add_argument("-mz", "--max-zoom", dest="max_zoom", type=int, required=False,
                         help="The maximum zoom of the heatmap. (default: %(default)s)", default=4)
-
 
     args = parser.parse_args()
     data_file = args.files
@@ -333,4 +338,5 @@ if __name__ == "__main__":
         except webbrowser.Error:
             print("[info] No runnable browser found. Open {} manually.".format(
                 output_file))
-            print("[info] Path to heatmap file: \"{}\"".format(os.path.abspath(output_file)))
+            print("[info] Path to heatmap file: \"{}\"".format(
+                os.path.abspath(output_file)))
